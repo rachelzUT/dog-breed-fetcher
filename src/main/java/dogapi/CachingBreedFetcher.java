@@ -1,5 +1,6 @@
 package dogapi;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -22,19 +23,22 @@ public class CachingBreedFetcher implements BreedFetcher {
     }
 
     @Override
-    public List<String> getSubBreeds(String breed) {
+    public List<String> getSubBreeds(String breed) throws BreedNotFoundException {
         // return statement included so that the starter code can compile and run.
         String key = breed.toLowerCase();
         if (cache.containsKey(key)) {
             return cache.get(key);
-        }
-        try {
-            callsMade++;
-            List<String> subBreeds = fetcher.getSubBreeds(key);
-            cache.put(key, subBreeds);
-            return subBreeds;
-        } catch (BreedNotFoundException e) {
-            throw e;
+        } else {
+            try {
+                callsMade++;
+                List<String> subBreeds = fetcher.getSubBreeds(key);
+                cache.put(key, subBreeds);
+                return subBreeds;
+            } catch (BreedNotFoundException e) {
+                //System.err.println("Breed not found: " + breed);\
+                throw e;
+                // return new ArrayList<>();
+            }
         }
     }
 
